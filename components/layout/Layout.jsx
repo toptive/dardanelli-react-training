@@ -135,6 +135,7 @@ export default function Layout({
           display: block;
           width: 100%;
         }
+        
         .btn-lg {
           padding: 0.5rem 1rem;
           font-size: 1.125rem;

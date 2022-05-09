@@ -63,7 +63,7 @@ function Job(props) {
   const { origin, job, token } = props;
 
   const { baseApiUrl } = props;
-  const [loading, setLoading] = useState(false);
+  const [Delete, setDelete] = useState(false);
 
   const [stateFormData, setStateFormData] = useState(FORM_DATA_JOB);
   const [stateFormError, setStateFormError] = useState([]);
@@ -90,7 +90,7 @@ function Job(props) {
     if (isValid) {
       // Call an external API endpoint to get posts.
       // You can use any data fetching library
-      setLoading(!loading);
+      setDelete(!Delete);
       const jobApi = await fetch(`${baseApiUrl}/job/[slug]`, {
         method: 'POST',
         headers: {
@@ -114,7 +114,7 @@ function Job(props) {
       } else {
         setStateFormMessage(result);
       }
-      setLoading(false);
+      setDelete(false);
     }
   }
 
@@ -244,7 +244,7 @@ function Job(props) {
         <FormJob
           onSubmit={onSubmitHandler}
           onChange={onChangeHandler}
-          loading={loading}
+          Delete={Delete}
           stateFormData={stateFormData}
           stateFormError={stateFormError}
           stateFormValid={stateFormValid}
@@ -288,7 +288,11 @@ function Job(props) {
         <p>Limit :{job.data.dateLimit}</p>
         <hr />
         By: {job.data.user.firstName || ''} {job.data.user.lastName || ''}
+        
+        <button className="btn btn-block btn-warning" onClick={console.log('hola')}>Delete</button>
+        <button className="btn btn-block btn-warning" onClick={console.log('hola')}>Edit</button>
       </div>
+
     );
   }
 

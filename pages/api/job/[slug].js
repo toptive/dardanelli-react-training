@@ -27,7 +27,7 @@ const handler = nextConnect()
     return res.json({ status: 'success', data: job });
   })
   // Post method
-  .post(async (req, res) => {
+  .post(async (req, res) => {    
     const {
       query: { id, name },
       method,
@@ -51,12 +51,13 @@ const handler = nextConnect()
         status: 1,
         userId: user.id,
       });
+
     } catch (err) {
       /* Sql error number */
       statusCode = 500;
       error = err.original.errno && 'Not available right now';
       status = 'error';
-    }
+    } 
 
     return res.status(statusCode).json({
       status,
@@ -65,8 +66,9 @@ const handler = nextConnect()
       data: newJob,
     });
   })
+ 
   // Put method
-  .put(async (req, res) => {
+ .put(async (req, res) => {
     res.end('method - put');
   })
   // Patch method

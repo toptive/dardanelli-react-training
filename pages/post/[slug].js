@@ -49,6 +49,7 @@ function Post(props) {
 
   async function onSubmitHandler(e) {
     e.preventDefault();
+    console.log('entre')
 
     let data = { ...stateFormData };
 
