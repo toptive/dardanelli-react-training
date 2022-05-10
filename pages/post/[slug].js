@@ -254,6 +254,8 @@ function Post(props) {
         <p>{post.data.content}</p>
         <hr />
         By: {post.data.user.firstName || ''} {post.data.user.lastName || ''}
+        <button className="btn btn-block btn-warning" onClick={console.log('hola')}>Delete</button>
+        <button className="btn btn-block btn-warning" onClick={console.log('hola')}>Edit</button>
       </div>
     ) : (
       <div className="container">
@@ -273,6 +275,7 @@ function Post(props) {
         <main className="content-detail">
           {router.asPath === '/post/add' ? renderPostForm() : renderPostList()}
         </main>
+        
       </div>
     </Layout>
   );

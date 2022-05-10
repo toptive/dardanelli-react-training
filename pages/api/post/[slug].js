@@ -43,6 +43,7 @@ const handler = nextConnect()
       data: newPost,
     });
   })
+ 
   // Put method
   .put(async (req, res) => {
     res.end('method - put');
@@ -50,6 +51,6 @@ const handler = nextConnect()
   // Patch method
   .patch(async (req, res) => {
     throw new Error('Throws me around! Error can be caught and handled.');
-  });
+  })
 
 export default handler;
