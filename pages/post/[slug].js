@@ -222,6 +222,20 @@ function Post(props) {
       </>
     );
   }
+  async function deleteFetch(id){
+    const postApi = await fetch(`${baseApiUrl}/post/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        authorization: token || '',
+      },      
+    });
+
+    let result = await postApi.json();
+    router.back()
+
+  }
 
   function renderPostList() {
     return post.data ? (
@@ -254,7 +268,7 @@ function Post(props) {
         <p>{post.data.content}</p>
         <hr />
         By: {post.data.user.firstName || ''} {post.data.user.lastName || ''}
-        <button className="btn btn-block btn-warning" onClick={console.log('hola')}>Delete</button>
+        <button className="btn btn-block btn-warning" onClick={() => deleteFetch(post.data.id)}>Delete</button>
         <button className="btn btn-block btn-warning" onClick={console.log('hola')}>Edit</button>
       </div>
     ) : (
