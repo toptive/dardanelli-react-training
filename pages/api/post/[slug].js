@@ -52,7 +52,6 @@ const handler = nextConnect()
       data: deletePost,  
     })
   })
- 
   // Put method
   .put(async (req, res) => {
     res.end('method - put');

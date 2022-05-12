@@ -253,6 +253,20 @@ function Job(props) {
       </>
     );
   }
+  async function deleteFetch(id){
+    const jobsApi = await fetch(`${baseApiUrl}/job/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        authorization: token || '',
+      },      
+    });
+
+    let result = await jobsApi.json();
+    router.back()
+
+  }
 
   function renderJobList() {
     return (
@@ -289,7 +303,7 @@ function Job(props) {
         <hr />
         By: {job.data.user.firstName || ''} {job.data.user.lastName || ''}
         
-        <button className="btn btn-block btn-warning" onClick={console.log('hola')}>Delete</button>
+        <button className="btn btn-block btn-warning" onClick={() => deleteFetch(job.data.id)}>Delete</button>
         <button className="btn btn-block btn-warning" onClick={console.log('hola')}>Edit</button>
       </div>
 

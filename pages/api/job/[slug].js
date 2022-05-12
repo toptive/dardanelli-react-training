@@ -66,6 +66,15 @@ const handler = nextConnect()
       data: newJob,
     });
   })
+  .delete (async (req, res  )=>{
+    const {slug:id} = req.query;
+    const deleteJobs = await models.jobs.destroy({
+      where : {id} 
+    })
+    return res.status(200).json({
+      data: deleteJobs,  
+    })
+  })
  
   // Put method
  .put(async (req, res) => {
