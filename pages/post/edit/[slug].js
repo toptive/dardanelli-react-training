@@ -3,49 +3,52 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 /* utils */
-import { absoluteUrl, getAppCookies } from '../../middleware/utils';
+import { absoluteUrl, getAppCookies } from '../../../middleware/utils';
 
 /* components */
-import Layout from '../../components/layout/Layout';
-import FormPost from '../../components/form/FormPost';
+import Layout from '../../../components/layout/Layout';
+import FormPost from '../../../components/form/FormPost';
 
-/* post schemas */
-const FORM_DATA_POST = {
-  title: {
-    value: '',
-    label: 'Title',
-    min: 10,
-    max: 36,
-    required: true,
-    validator: {
-      regEx: /^[a-z\sA-Z0-9\W\w]+$/,
-      error: 'Please insert valid Title',
-    },
-  },
-  content: {
-    value: '',
-    label: 'Content',
-    min: 6,
-    max: 1500,
-    required: true,
-    validator: {
-      regEx: /^[a-z\sA-Z0-9\W\w]+$/,
-      error: 'Please insert valid Content',
-    },
-  },
-};
 
-function Post(props) {
+
+function Edit (props) {
   const router = useRouter();
 
   const { origin, post, token } = props;
   const { baseApiUrl } = props;
 
+  const FORM_DATA_POST = {
+    title: {
+      value: post.data.title,
+      label: 'Title',
+      min: 10,
+      max: 36,
+      required: true,
+      validator: {
+        regEx: /^[a-z\sA-Z0-9\W\w]+$/,
+        error: 'Please insert valid Title',
+      },
+    },
+    content: {
+      value: post.data.content,
+      label: 'Content',
+      min: 6,
+      max: 1500,
+      required: true,
+      validator: {
+        regEx: /^[a-z\sA-Z0-9\W\w]+$/,
+        error: 'Please insert valid Content',
+      },
+    },
+  };
   const [loading, setLoading] = useState(false);
   const [stateFormData, setStateFormData] = useState(FORM_DATA_POST);
   const [stateFormError, setStateFormError] = useState([]);
   const [stateFormMessage, setStateFormMessage] = useState({});
   const [stateFormValid, setStateFormValid] = useState(false);
+  
+  /* post schemas */
+
 
   async function onSubmitHandler(e) {
     e.preventDefault();
@@ -65,22 +68,24 @@ function Post(props) {
       // Call an external API endpoint to get posts.
       // You can use any data fetching library
       setLoading(!loading);
-      const postApi = await fetch(`${baseApiUrl}/post/[slug]`, {
-        method: 'POST',
+      const postApi = await fetch(`${baseApiUrl}/post/${post.data.id}`, {
+        method: 'PUT',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
           authorization: token || '',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          ...data,
+          title: e.target.title.value,
+          content: e.target.content.value })
       });
+      router.back()
 
       let result = await postApi.json();
       if (result.message && result.data && result.message === 'done') {
-        router.push({
-          pathname: result.data.slug ? `/post/${result.data.slug}` : '/post',
-        });
-      } else {
+        router.back()} 
+        else {
         setStateFormMessage(result);
       }
       setLoading(false);
@@ -205,7 +210,7 @@ function Post(props) {
       <>
         <Link
           href={{
-            pathname: '/post',
+            pathname: `/post/${post.data.slug}`,
           }}
         >
           <a>&larr; Back</a>
@@ -222,65 +227,8 @@ function Post(props) {
       </>
     );
   }
-  async function deleteFetch(id){
-    const postApi = await fetch(`${baseApiUrl}/post/${id}`, {
-      method: 'DELETE',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        authorization: token || '',
-      },      
-    });
 
-    let result = await postApi.json();
-    router.back()
 
-  }
-  async function updateFetch (data){
-    router.push({
-      pathname:`/post/edit/${data.slug}`})
-  }
-
-  function renderPostList() {
-    return post.data ? (
-      <div className="card">
-        <Link
-          href={{
-            pathname: '/post',
-          }}
-        >
-          <a>&larr; Back</a>
-        </Link>
-        <h2
-          className="sub-title"
-          style={{
-            display: 'block',
-            marginTop: '.75rem',
-          }}
-        >
-          {post.data.title}
-          <small
-            style={{
-              display: 'block',
-              fontWeight: 'normal',
-              marginTop: '.75rem',
-            }}
-          >
-            Posted: {post.data.createdAt}
-          </small>
-        </h2>
-        <p>{post.data.content}</p>
-        <hr />
-        By: {post.data.user.firstName || ''} {post.data.user.lastName || ''}
-        <button className="btn btn-block btn-warning" onClick={() => deleteFetch(post.data.id)}>Delete</button>
-        <button className="btn btn-block btn-warning" onClick={()=> updateFetch (post.data)}>Edit</button>
-      </div>
-    ) : (
-      <div className="container">
-        <div class="card">Data Not Found</div>
-      </div>
-    );
-  }
 
   return (
     <Layout
@@ -291,7 +239,7 @@ function Post(props) {
     >
       <div className="container">
         <main className="content-detail">
-          {router.asPath === '/post/add' ? renderPostForm() : renderPostList()}
+        {router.asPath === `/post/edit/${post.data.slug}` ? renderPostForm() : '/post'}
         </main>
         
       </div>
@@ -324,4 +272,4 @@ export async function getServerSideProps(context) {
   };
 }
 
-export default Post;
+export default Edit;

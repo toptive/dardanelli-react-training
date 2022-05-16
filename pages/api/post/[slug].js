@@ -47,15 +47,41 @@ const handler = nextConnect()
     const {slug:id} = req.query;
     const deletePost = await models.posts.destroy({
       where : {id} 
-    })
+    })    
     return res.status(200).json({
       data: deletePost,  
     })
   })
+
   // Put method
   .put(async (req, res) => {
-    res.end('method - put');
+    const user = req.user;
+    const { slug } = req.query;
+    const id = slug;
+    if (user) {
+      await models.posts.update(req.body, {where: { id: id , userId: user.id }
+      })
+    
+    .then(num => {
+      if (num == 1) {
+        res.status(200).send({
+          message: 'done',
+          status: 'success'
+        });
+      } else {
+        res.status(401).send({
+          message: 'Cannot update post with id=${id}. Maybe Job was not found or you are not de owner!',
+          status: 'error',
+          
+        });
+      }
+      })
+    }
   })
+  
+  
+      
+      
   // Patch method
   .patch(async (req, res) => {
     throw new Error('Throws me around! Error can be caught and handled.');
