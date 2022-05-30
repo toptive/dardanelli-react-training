@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import Router , { useRouter } from 'next/router';
+
 
 /* utils */
 import { absoluteUrl, getAppCookies } from '../../../middleware/utils';
@@ -52,7 +53,7 @@ function Edit (props) {
 
   async function onSubmitHandler(e) {
     e.preventDefault();
-    console.log('entre')
+    
 
     let data = { ...stateFormData };
 
@@ -63,35 +64,37 @@ function Edit (props) {
 
     /* validation handler */
     const isValid = validationHandler(stateFormData);
-
+    
     if (isValid) {
       // Call an external API endpoint to get posts.
-      // You can use any data fetching library
-      setLoading(!loading);
+      // You can use any data fetching library}
+      
+      setLoading(!loading);      
       const postApi = await fetch(`${baseApiUrl}/post/${post.data.id}`, {
         method: 'PUT',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
-          authorization: token || '',
+          authorization: token || '', 
         },
-        body: JSON.stringify({
-          ...data,
-          title: e.target.title.value,
-          content: e.target.content.value })
+        
+        body: JSON.stringify(data)          
       });
-      router.back()
-
       let result = await postApi.json();
-      if (result.message && result.data && result.message === 'done') {
-        router.back()} 
-        else {
+      if (!(result.status === 'success' && result.message && result.message === 'done')){
         setStateFormMessage(result);
+        window.alert("verify that you are logged and is the correct account")
+      }
+      else{
+        alert("The post was edited perfectly!")
       }
       setLoading(false);
-    }
+      router.push({
+        pathname: '/post',
+      });
+    }  
   }
-
+  
   function onChangeHandler(e) {
     const { name, value } = e.currentTarget;
 
@@ -116,7 +119,7 @@ function Edit (props) {
       if (states[input].required) {
         if (!states[input].value) {
           errors[input] = {
-            hint: `${states[e.target.name].label} required`,
+            hint: `${states[e.target.name].label} min ${states[input].min}`,
             isInvalid: true,
           };
           isValid = false;
@@ -211,9 +214,12 @@ function Edit (props) {
         <Link
           href={{
             pathname: `/post/${post.data.slug}`,
+
           }}
-        >
+          
+        >          
           <a>&larr; Back</a>
+          
         </Link>
         <FormPost
           onSubmit={onSubmitHandler}
@@ -239,8 +245,11 @@ function Edit (props) {
     >
       <div className="container">
         <main className="content-detail">
-        {router.asPath === `/post/edit/${post.data.slug}` ? renderPostForm() : '/post'}
+        {router.asPath === `/post/edit/${post.data.slug}` ? renderPostForm() : '/post'},
+        
+        
         </main>
+        
         
       </div>
     </Layout>

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { Toaster ,toast } from 'react-hot-toast';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+
 
 /* utils */
 import { absoluteUrl, getAppCookies } from '../../middleware/utils';
@@ -38,7 +40,7 @@ const FORM_DATA_POST = {
 function Post(props) {
   const router = useRouter();
 
-  const { origin, post, token } = props;
+  const { origin, post, token, user } = props;
   const { baseApiUrl } = props;
 
   const [loading, setLoading] = useState(false);
@@ -222,24 +224,57 @@ function Post(props) {
       </>
     );
   }
-  async function deleteFetch(id){
-    const postApi = await fetch(`${baseApiUrl}/post/${id}`, {
-      method: 'DELETE',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        authorization: token || '',
-      },      
-    });
-
-    let result = await postApi.json();
-    router.back()
-
+  
+  async function deleteFetch(id){ 
+    
+    if(confirm("you want delete the post ?")) {
+      toast.success('The post was deleted successfully',{
+        position:"top-left",
+        duration: 2000,
+        style:{
+          background: "#212121",
+          color: "white",
+        }     
+      
+      
+    })
+      const postApi = await fetch(`${baseApiUrl}/post/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          authorization: token || '',  
+          }
+          });
+          
+        <Toaster />  
+      let result = await postApi.json();
+      router.push(`/post/`)
+    }
   }
+  <Toaster/> 
+  
   async function updateFetch (data){
-    router.push({
-      pathname:`/post/edit/${data.slug}`})
-  }
+    
+    if(confirm("Are you sure you want to edit the post ?")){ 
+      
+      router.push({
+        pathname:`/post/edit/${data.slug}`})
+
+        toast.success('The post was deleted successfully',{
+          position:"bottom-center",
+          duration: 100000000000,
+          style:{
+            background: "#212121",
+            color: "white",
+          }    
+          }
+        )
+    }  
+ 
+}
+
+  
 
   function renderPostList() {
     return post.data ? (
@@ -271,9 +306,17 @@ function Post(props) {
         </h2>
         <p>{post.data.content}</p>
         <hr />
+        
         By: {post.data.user.firstName || ''} {post.data.user.lastName || ''}
-        <button className="btn btn-block btn-warning" onClick={() => deleteFetch(post.data.id)}>Delete</button>
+        {user && 
+        <> 
+        <button className="btn btn-block btn-warning" onClick= {() => deleteFetch(post.data.id) }
+        >Delete</button>
         <button className="btn btn-block btn-warning" onClick={()=> updateFetch (post.data)}>Edit</button>
+
+        
+        </>
+        }
       </div>
     ) : (
       <div className="container">

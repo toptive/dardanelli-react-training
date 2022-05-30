@@ -77,8 +77,29 @@ const handler = nextConnect()
   })
  
   // Put method
- .put(async (req, res) => {
-    res.end('method - put');
+  .put(async (req, res) => {
+    const user = req.user;
+    const { slug } = req.query;
+    const id = slug;
+    if (user) {
+      await models.jobs.update(req.body, {where: { id: id , userId: user.id }
+      })
+    
+    .then(num => {
+      if (num == 1) {
+        res.status(200).send({
+          message: 'done',
+          status: 'success'
+        });
+      } else {
+        res.status(401).send({
+          message: 'Cannot update jobs with id=${id}. Maybe Job was not found or you are not de owner!',
+          status: 'error',
+          
+        });
+      }
+      })
+    }
   })
   // Patch method
   .patch(async (req, res) => {

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Toaster ,toast } from 'react-hot-toast';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -60,10 +61,10 @@ const FORM_DATA_JOB = {
 function Job(props) {
   const router = useRouter();
 
-  const { origin, job, token } = props;
+  const { origin, job, token, user} = props;
 
   const { baseApiUrl } = props;
-  const [Delete, setDelete] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [stateFormData, setStateFormData] = useState(FORM_DATA_JOB);
   const [stateFormError, setStateFormError] = useState([]);
@@ -90,7 +91,7 @@ function Job(props) {
     if (isValid) {
       // Call an external API endpoint to get posts.
       // You can use any data fetching library
-      setDelete(!Delete);
+      setLoading(!loading);
       const jobApi = await fetch(`${baseApiUrl}/job/[slug]`, {
         method: 'POST',
         headers: {
@@ -114,7 +115,7 @@ function Job(props) {
       } else {
         setStateFormMessage(result);
       }
-      setDelete(false);
+      setLoading(false);
     }
   }
 
@@ -244,7 +245,7 @@ function Job(props) {
         <FormJob
           onSubmit={onSubmitHandler}
           onChange={onChangeHandler}
-          Delete={Delete}
+          loading={loading}
           stateFormData={stateFormData}
           stateFormError={stateFormError}
           stateFormValid={stateFormValid}
@@ -253,21 +254,36 @@ function Job(props) {
       </>
     );
   }
-  async function deleteFetch(id){
-    const jobsApi = await fetch(`${baseApiUrl}/job/${id}`, {
-      method: 'DELETE',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        authorization: token || '',
-      },      
-    });
 
-    let result = await jobsApi.json();
-    router.back()
-
+  async function deleteFetch(id){ 
+    
+    if(confirm("you want delete the job ?")) {
+      
+      const jobApi = await fetch(`${baseApiUrl}/job/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          authorization: token || '',  
+          }
+          });
+          
+            
+      let result = await jobApi.json();
+      router.push(`/job/`)
+    }
   }
+  async function updateFetch (data){
+    
+    if(confirm("Are you sure you want to edit the post ?")){ 
+      
+      router.push({
+        pathname:`/job/edit/${data.slug}`})
 
+       
+    }  
+ 
+}
   function renderJobList() {
     return (
       <div className="card">
@@ -302,11 +318,14 @@ function Job(props) {
         <p>Limit :{job.data.dateLimit}</p>
         <hr />
         By: {job.data.user.firstName || ''} {job.data.user.lastName || ''}
-        
-        <button className="btn btn-block btn-warning" onClick={() => deleteFetch(job.data.id)}>Delete</button>
-        <button className="btn btn-block btn-warning" onClick={console.log('hola')}>Edit</button>
+        {user &&
+        <> 
+        <button className="btn btn-block btn-warning" onClick= {() => deleteFetch (job.data.id) }
+        >Delete</button>
+        <button className="btn btn-block btn-warning" onClick={()=> updateFetch (job.data)}>Edit</button>
+        </>
+      }
       </div>
-
     );
   }
 

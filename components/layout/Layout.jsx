@@ -149,6 +149,15 @@ export default function Layout({
           border-left: 0;
           border-color: #ffc107;
         }
+
+        .btn-buttons2{
+          background-color: #ffc107;  
+          border-color: #ffc107;   
+          color: #fff;              
+          border-top: 0;
+          border-left: 0;                    
+          width: 50%;
+        }
         .home {
           overflow-x: hidden;
         }

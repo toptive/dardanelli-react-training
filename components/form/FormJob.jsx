@@ -1,3 +1,5 @@
+import router from "next/router";
+
 function FormJob(props) {
   const {
     onSubmit,
@@ -86,9 +88,14 @@ function FormJob(props) {
           disabled={loading}
         >
           {!loading ? 'Submit' : 'Submitting...'}
+          
+                    
         </button>
+        <a href="/job">&larr; Cancel</a>
       </div>
+      
     </form>
+      
   );
 }
 export default FormJob;

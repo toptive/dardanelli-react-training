@@ -45,8 +45,9 @@ const handler = nextConnect()
   })  
   .delete (async (req, res)=>{
     const {slug:id} = req.query;
+    const user = req.user;
     const deletePost = await models.posts.destroy({
-      where : {id} 
+      where : {id:id , userId: user.id} 
     })    
     return res.status(200).json({
       data: deletePost,  

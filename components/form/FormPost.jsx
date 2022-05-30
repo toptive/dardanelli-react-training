@@ -57,6 +57,7 @@ function FormPost(props) {
         >
           {!loading ? 'Submit' : 'Submitting...'}
         </button>
+        <a href="/post">&larr; Cancel</a>
       </div>
     </form>
   );
