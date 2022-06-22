@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Router, { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
-
+import GoogleLogin from 'react-google-login';
 /* utils */
 import { absoluteUrl } from '../../middleware/utils';
 
@@ -103,7 +103,9 @@ function Login(props) {
       setLoading(false);
     }
   }
-
+  const responseGoogle=(respuesta)=>{
+    console.log(respuesta)
+  }
   function validationHandler(states, e) {
     const input = (e && e.target.name) || '';
     const errors = [];
@@ -217,6 +219,13 @@ function Login(props) {
           >
             <a>&larr; Back</a>
           </Link>
+          <GoogleLogin
+          clientId="378695973265-glhkegrv9svn20cpo3frb075o310m2mv.apps.googleusercontent.com"
+          buttonText="Login"
+          onSuccess={responseGoogle}
+          onFailure={responseGoogle}
+          cookiePolicy={'single_host_origin'}
+          />,         
           <FormLogin
             props={{
               onSubmitHandler,
@@ -226,7 +235,7 @@ function Login(props) {
               stateFormError,
               stateFormMessage,
             }}
-          />
+          />          
         </main>
       </div>
     </Layout>
