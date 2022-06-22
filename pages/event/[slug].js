@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import {Toaster,toast} from 'react-hot-toast';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -7,10 +8,11 @@ import { absoluteUrl, getAppCookies } from '../../middleware/utils';
 
 /* components */
 import Layout from '../../components/layout/Layout';
-import FormJob from '../../components/form/FormJob';
+import FormEvent from '../../components/form/FormEvent';
 
 /* post schemas */
-const FORM_DATA_Job = {
+
+const FORM_DATE_EVENT = {
   title: {
     value: '',
     label: 'Title',
@@ -33,18 +35,7 @@ const FORM_DATA_Job = {
       error: 'Please insert valid Content',
     },
   },
-  reportManager: {
-    value: '',
-    label: 'Content',
-    min: 6,
-    max: 1500,
-    required: true,
-    validator: {
-      regEx: /^[a-z\sA-Z0-9\W\w]+$/,
-      error: 'Please insert valid Report Manager',
-    },
-  },
-  dateLimit: {
+  dateStart: {
     value: '',
     label: 'Date',
     min: 6,
@@ -52,26 +43,37 @@ const FORM_DATA_Job = {
     required: true,
     validator: {
       regEx: /^[a-z\sA-Z0-9\W\w]+$/,
-      error: 'Please insert valid Date limit',
+      error: 'Please insert valid Date start',
+    },
+  },
+  dateEnd: {
+    value: '',
+    label: 'Date',
+    min: 6,
+    max: 24,
+    required: true,
+    validator: {
+      regEx: /^[a-z\sA-Z0-9\W\w]+$/,
+      error: 'Please insert valid Date end',
     },
   },
 };
 
-function event(props) {
+function Event(props) {
   const router = useRouter();
 
-  const { origin, Job, token, user} = props;
+  const { origin, event, token, user } = props;
 
   const { baseApiUrl } = props;
   const [loading, setLoading] = useState(false);
 
-  const [stateFormData, setStateFormData] = useState(FORM_DATA_Job);
+  const [stateFormData, setStateFormData] = useState(FORM_DATE_EVENT);
   const [stateFormError, setStateFormError] = useState([]);
   const [stateFormMessage, setStateFormMessage] = useState({});
   const [stateFormValid, setStateFormValid] = useState(false);
 
   async function onSubmitHandler(e) {
-    e.prJobDefault();
+    e.preventDefault();
 
     let data = { ...stateFormData };
 
@@ -79,10 +81,10 @@ function event(props) {
     data = { ...data, title: data.title.value || '' };
     /* content */
     data = { ...data, content: data.content.value || '' };
-    /* reportManager */
-    data = { ...data, reportManager: data.reportManager.value || '' };
-    /* dateLimit */
-    data = { ...data, dateLimit: data.dateLimit.value || '' };
+    /* dateStart */
+    data = { ...data, dateStart: data.dateStart.value || '' };
+    /* dateEnd */
+    data = { ...data, dateEnd: data.dateEnd.value || '' };
 
     /* validation handler */
     const isValid = validationHandler(stateFormData);
@@ -91,7 +93,7 @@ function event(props) {
       // Call an external API endpoint to get posts.
       // You can use any data fetching library
       setLoading(!loading);
-      const JobApi = await fetch(`${baseApiUrl}/Job/[slug]`, {
+      const eventApi = await fetch(`${baseApiUrl}/event/[slug]`, {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -101,7 +103,7 @@ function event(props) {
         body: JSON.stringify(data),
       });
 
-      let result = await JobApi.json();
+      let result = await eventApi.json();
       if (
         result.status === 'success' &&
         result.message &&
@@ -109,7 +111,7 @@ function event(props) {
         result.data
       ) {
         router.push({
-          pathname: result.data.slug ? `/Job/${result.data.slug}` : '/Job',
+          pathname: result.data.slug ? `/event/${result.data.slug}` : '/event',
         });
       } else {
         setStateFormMessage(result);
@@ -231,17 +233,17 @@ function event(props) {
     return isValid;
   }
 
-  function renderJobForm() {
+  function renderEventForm() {
     return (
       <>
         <Link
           href={{
-            pathname: '/Job',
+            pathname: '/event',
           }}
         >
           <a>&larr; Back</a>
         </Link>
-        <FormJob
+        <FormEvent
           onSubmit={onSubmitHandler}
           onChange={onChangeHandler}
           loading={loading}
@@ -256,39 +258,61 @@ function event(props) {
 
   async function deleteFetch(id){ 
     
-    if(confirm("you want delete the Job ?")) {
-      
-      const JobApi = await fetch(`${baseApiUrl}/Job/${id}`, {
+    
+    if(confirm("you want delete the event ?")
+    ) {
+      toast.error('Delete'),{
+        
+        position: "top-right ",
+        autoclose: true,
+        style:{
+          background: "#000",
+          color: "white",
+        }
+      }
+        
+
+      const eventApi = await fetch(`${baseApiUrl}/event/${id}`, {
         method: 'DELETE',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
           authorization: token || '',  
           }
-          });
-          
-            
-      let result = await JobApi.json();
-      router.push(`/Job/`)
+          });       
+           
+      let result = await eventApi.json();
+      console.log(result.message);
+      if (result.status === 'success' ){         
+        toast.success('The post was deleted successfully')      
+        
+      }
+      
+      router.push(`/event/`)
+      
+        
     }
   }
+  <Toaster></Toaster>
   async function updateFetch (data){
     
-    if(confirm("Are you sure you want to edit the post ?")){ 
+    if(confirm("Are you sure you want to edit the post ?")){
+      
+        
       
       router.push({
-        pathname:`/Job/edit/${data.slug}`})
+        pathname:`/event/edit/${data.slug}`})
 
        
     }  
  
 }
-  function renderJobList() {
+  function renderEventList() {
     return (
       <div className="card">
         <Link
           href={{
-            pathname: '/Job',
+            pathname: '/event',
           }}
         >
           <a>&larr; Back</a>
@@ -300,7 +324,7 @@ function event(props) {
             marginTop: '.75rem',
           }}
         >
-          {Job.data.title}
+          {event.data.title}
           <small
             style={{
               display: 'block',
@@ -308,21 +332,22 @@ function event(props) {
               marginTop: '.75rem',
             }}
           >
-            Posted: {Job.data.createdAt}
+            Posted: {event.data.createdAt}
           </small>
         </h2>
-        <p>{Job.data.content}</p>
-        <p>Email: {Job.data.emailTo}</p>
-        <p>Report to: {Job.data.reportManager}</p>
-        <p>Limit :{Job.data.dateLimit}</p>
+        <p>Description : {event.data.content}</p>
+        <p>Email: {event.data.emailTo}</p>        
+        <p>Start : {event.data.dateStart}</p>
+        <p>End : {event.data.dateEnd}</p>
         <hr />
-        By: {Job.data.user.firstName || ''} {Job.data.user.lastName || ''}
+        By: {event.data.user.firstName || ''} {event.data.user.lastName || ''}
         {user &&
         <> 
-        <button className="btn btn-block btn-warning" onClick= {() => deleteFetch (Job.data.id) }
+        <button className="btn btn-block btn-warning" onClick= {() => deleteFetch (event.data.id) }
         >Delete</button>
-        <button className="btn btn-block btn-warning" onClick={()=> updateFetch (Job.data)}>Edit</button>
+        <button className="btn btn-block btn-warning" onClick={()=> updateFetch (event.data)}>Edit</button>
         </>
+        
       }
       </div>
     );
@@ -330,14 +355,14 @@ function event(props) {
 
   return (
     <Layout
-      title={`Next.js with Sequelize | Job Page - ${Job.data &&
-        Job.data.title}`}
+      title={`Next.js with Sequelize | event Page - ${event.data &&
+        event.data.title}`}
       url={`${origin}${router.asPath}`}
       origin={origin}
     >
       <div className="container">
         <main className="content-detail">
-          {router.asPath === '/Job/add' ? renderJobForm() : renderJobList()}
+          {router.asPath === '/event/add' ? renderEventForm() : renderEventList()}
         </main>
       </div>
     </Layout>
@@ -352,21 +377,21 @@ export async function getServerSideProps(context) {
   const token = getAppCookies(req).token || '';
   const baseApiUrl = `${origin}/api`;
 
-  let Job = {};
+  let event = {};
 
   if (query.slug !== 'add') {
-    const JobApi = await fetch(`${baseApiUrl}/Job/${query.slug}`);
-    Job = await JobApi.json();
+    const eventApi = await fetch(`${baseApiUrl}/event/${query.slug}`);
+    event = await eventApi.json();
   }
 
   return {
     props: {
       origin,
       baseApiUrl,
-      Job,
+      event,
       token,
     },
   };
 }
 
-export default event;
+export default Event;

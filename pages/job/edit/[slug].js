@@ -8,6 +8,7 @@ import { absoluteUrl, getAppCookies } from '../../../middleware/utils';
 /* components */
 import Layout from '../../../components/layout/Layout';
 import FormJob from '../../../components/form/FormJob';
+import toast from 'react-hot-toast';
 function Edit(props) {
 
   const { origin, job, token } = props;
@@ -100,7 +101,7 @@ function Edit(props) {
         setStateFormMessage(result);
         window.alert("verify that you are logged and is the correct account")
       }
-      else{
+      else{        
         alert("The job was edited perfectly!")
       }
       setLoading(false);

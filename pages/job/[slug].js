@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Toaster ,toast } from 'react-hot-toast';
+import {Toaster,toast} from 'react-hot-toast';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -11,6 +11,7 @@ import Layout from '../../components/layout/Layout';
 import FormJob from '../../components/form/FormJob';
 
 /* post schemas */
+
 const FORM_DATA_JOB = {
   title: {
     value: '',
@@ -257,8 +258,20 @@ function Job(props) {
 
   async function deleteFetch(id){ 
     
-    if(confirm("you want delete the job ?")) {
-      
+    
+    if(confirm("you want delete the job ?")
+    ) {
+      toast.error('Delete'),{
+        
+        position: "top-right ",
+        autoclose: true,
+        style:{
+          background: "#000",
+          color: "white",
+        }
+      }
+        
+
       const jobApi = await fetch(`${baseApiUrl}/job/${id}`, {
         method: 'DELETE',
         headers: {
@@ -266,16 +279,26 @@ function Job(props) {
           'Content-Type': 'application/json',
           authorization: token || '',  
           }
-          });
-          
-            
+          });       
+           
       let result = await jobApi.json();
+      console.log(result.message);
+      if (result.status === 'success' ){         
+        toast.success('The post was deleted successfully')      
+        
+      }
+      
       router.push(`/job/`)
+      
+        
     }
   }
+  <Toaster></Toaster>
   async function updateFetch (data){
     
-    if(confirm("Are you sure you want to edit the post ?")){ 
+    if(confirm("Are you sure you want to edit the post ?")){
+      
+        
       
       router.push({
         pathname:`/job/edit/${data.slug}`})
@@ -324,6 +347,7 @@ function Job(props) {
         >Delete</button>
         <button className="btn btn-block btn-warning" onClick={()=> updateFetch (job.data)}>Edit</button>
         </>
+        
       }
       </div>
     );

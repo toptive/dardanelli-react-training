@@ -72,6 +72,8 @@ const handler = nextConnect()
       where : {id} 
     })
     return res.status(200).json({
+      message: 'done',
+      status: 'success',
       data: deleteJobs,  
     })
   })

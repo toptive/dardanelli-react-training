@@ -31,6 +31,12 @@ export default function Home(props) {
           </p>
           <UserNav props={{ user: user }} />
           <div className="grid">
+            <Link href="/calendar">
+              <a className="card">
+                <h3>Calendar &rarr;</h3>
+                <p>Calendar on events</p>
+              </a>
+            </Link>
             <Link href="/user">
               <a className="card">
                 <h3>Users &rarr;</h3>

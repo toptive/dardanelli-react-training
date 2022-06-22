@@ -10,28 +10,29 @@ import { absoluteUrl, getAppCookies } from '../middleware/utils';
 import Layout from '../components/layout/Layout';
 import UserNav from '../components/navigation/User';
 
-function Job(props) {
+function event(props) {
   const router = useRouter();
-  const { origin, user, jobs } = props;
+  const { origin, user, events } = props;
 
-  function renderJobs() {
-    return jobs.data.map((job, j) => {
+  function renderevents() {
+    return events.data.map((event, j) => {
       return (
-        <Link key={j} href="/job/[slug]" as={`/job/${job.slug}`}>
+        <Link key={j} href="/event/[slug]" as={`/event/${event.slug}`}>
           <a className="card">
-            <h3 className="headline">{job.title}</h3>
+            <h3 className="headline">{event.title}</h3>
             <div>
-              <small>Posted: {job.createdAt}</small>
+              <small>Posted: {event.createdAt}</small>
               <small style={{ float: 'right' }}>
-                Job by: {job.user.firstName || ''} {job.user.lastName || ''}
+                event by: {event.user.firstName || ''} {event.user.lastName || ''}
               </small>
             </div>
-            {/* <p className="description">{job.content}</p> */}
-            <small style={{ display: 'block' }}>Email: {job.emailTo}</small>
+            {/* <p className="description">{event.content}</p> */}
+            <small style={{ display: 'block' }}>Email: {event.emailTo}</small>
             <small style={{ display: 'block' }}>
-              Report to: {job.reportManager}
+              
             </small>
-            <small style={{ display: 'block' }}>Limit :{job.dateLimit}</small>
+            <small style={{ display: 'block' }}>Start :{event.dateStart}</small>
+            <small style={{ display: 'block' }}>End :{event.dateEnd}</small>
           </a>
         </Link>
       );
@@ -40,16 +41,16 @@ function Job(props) {
 
   async function loadMoreClick(e) {
     await Router.push({
-      pathname: '/job',
+      pathname: '/event',
       query: {
-        nextPage: jobs.nextPage ? jobs.nextPage : 5,
+        nextPage: events.nextPage ? events.nextPage : 5,
       },
     });
   }
 
   return (
     <Layout
-      title="Next.js with Sequelize | Job Page"
+      title="Next.js with Sequelize | event Page"
       url={`${origin}${router.asPath}`}
       origin={origin}
     >
@@ -76,7 +77,7 @@ function Job(props) {
             >
               <a>&larr; </a>
             </Link>
-            Latest Jobs
+            Latest events
           </h2>
           <div className="grid">
             <small
@@ -86,12 +87,12 @@ function Job(props) {
                 marginBottom: '1rem',
               }}
             >
-              <Link href="/job/add">
-                <a>+ Add Job</a>
+              <Link href="/event/add">
+                <a>+ Add event</a>
               </Link>
             </small>
-            {jobs.status === 'success' ? (
-              jobs.data.length && renderJobs()
+            {events.status === 'success' ? (
+              events.data.length && renderevents()
             ) : (
               <h3
                 style={{
@@ -102,14 +103,14 @@ function Job(props) {
                   width: '100%',
                 }}
               >
-                {jobs.error}
+                {events.error}
               </h3>
             )}
 
-            {jobs.status === 'success' && (
+            {events.status === 'success' && (
               <>
-                {jobs.nextPage < jobs.total &&
-                jobs.data.length !== jobs.total ? (
+                {events.nextPage < events.total &&
+                events.data.length !== events.total ? (
                   <button onClick={loadMoreClick}>Next</button>
                 ) : (
                   <span className="span-info">no page left</span>
@@ -148,22 +149,22 @@ export async function getServerSideProps(context) {
   const nextPageUrl = !isNaN(nextPage) ? `?nextPage=${nextPage}` : '';
   const baseApiUrl = `${origin}/api`;
 
-  const jobsApi = await fetch(`${baseApiUrl}/job${nextPageUrl}`, {
+  const eventsApi = await fetch(`${baseApiUrl}/event${nextPageUrl}`, {
     headers: {
       authorization: token || '',
     },
   });
 
-  const jobs = await jobsApi.json();
+  const events = await eventsApi.json();
 
   return {
     props: {
       origin,
       referer,
       token,
-      jobs,
+      events,
     },
   };
 }
 
-export default Job;
+export default event;

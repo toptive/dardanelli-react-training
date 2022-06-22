@@ -60,7 +60,7 @@ function User(props) {
                     marginTop: '.75rem',
                   }}
                 >
-                  Member since {user.data.createdAt}
+                  Member since {user.data.createdAt.split('T')[0]}
                 </small>
               </h3>
               {(user.data.posts.length > 0 && (
@@ -77,7 +77,7 @@ function User(props) {
                       >
                         <a className="card">
                           <h4>{post.title}</h4>
-                          <span>{post.createdAt}</span>
+                          <span>{post.createdAt.split('T')[0]}</span>
                         </a>
                       </Link>
                     );
@@ -108,7 +108,7 @@ function User(props) {
                             <small>{job.emailTo}</small>
                           </span>
                           <span>
-                            <span>{job.createdAt}</span>
+                            <span>{job.createdAt.split('T')[0]}</span>
                           </span>
                         </a>
                       </Link>

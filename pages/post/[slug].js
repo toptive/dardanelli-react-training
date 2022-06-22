@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import { Toaster ,toast } from 'react-hot-toast';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-
 
 /* utils */
 import { absoluteUrl, getAppCookies } from '../../middleware/utils';
@@ -226,7 +224,9 @@ function Post(props) {
   }
   
   async function deleteFetch(id){ 
-    
+    const mensaje = ()=>{
+      toast.success("ingreso perfecto")
+    }
     if(confirm("you want delete the post ?")) {
       toast.success('The post was deleted successfully',{
         position:"top-left",
@@ -247,7 +247,7 @@ function Post(props) {
           }
           });
           
-        <Toaster />  
+   
       let result = await postApi.json();
       router.push(`/post/`)
     }
@@ -268,6 +268,7 @@ function Post(props) {
             background: "#212121",
             color: "white",
           }    
+          
           }
         )
     }  
@@ -301,7 +302,7 @@ function Post(props) {
               marginTop: '.75rem',
             }}
           >
-            Posted: {post.data.createdAt}
+            Posted: {post.data.createdAt.split('T')[0]}
           </small>
         </h2>
         <p>{post.data.content}</p>
@@ -313,7 +314,7 @@ function Post(props) {
         <button className="btn btn-block btn-warning" onClick= {() => deleteFetch(post.data.id) }
         >Delete</button>
         <button className="btn btn-block btn-warning" onClick={()=> updateFetch (post.data)}>Edit</button>
-
+        <ToastContainer />
         
         </>
         }
