@@ -23,6 +23,9 @@ module.exports = {
       password: {
         type: Sequelize.STRING,
       },
+      googleId: {
+        type: Sequelize.STRING,
+      },
       phoneNumber: {
         type: Sequelize.STRING(32),
       },

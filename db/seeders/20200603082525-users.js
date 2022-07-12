@@ -13,6 +13,7 @@ module.exports = {
         phoneNumber: '0239239249239',
         createdAt: new Date(),
         updatedAt: new Date(),
+        googleId: null,
       },
       {
         username: 'janedoe',
@@ -25,6 +26,7 @@ module.exports = {
         phoneNumber: '0239239249239',
         createdAt: new Date(),
         updatedAt: new Date(),
+        googleId: null,
       },
       {
         username: 'johndoe3',
@@ -37,6 +39,7 @@ module.exports = {
         phoneNumber: '0239239249239',
         createdAt: new Date(),
         updatedAt: new Date(),
+        googleId: null,
       },
       {
         username: 'johndoe4',
@@ -49,6 +52,7 @@ module.exports = {
         phoneNumber: '0239239249239',
         createdAt: new Date(),
         updatedAt: new Date(),
+        googleId: null,
       },
     ]);
   },
